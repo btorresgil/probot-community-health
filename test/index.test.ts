@@ -4,7 +4,7 @@
 import nock from 'nock'
 // Requiring our app implementation
 import myProbotApp from '../src'
-import { Probot } from 'probot'
+import { Probot, Context } from 'probot'
 // Requiring our fixtures
 import payload from './fixtures/schedule.repository.json'
 const fs = require('fs')
@@ -32,23 +32,30 @@ describe('My Probot app', () => {
     probot.load(myProbotApp)
   })
 
-  test('webhook is received', async done => {
+  test('webhook checks for app config', async done => {
     // Test that we correctly return a test token
     nock('https://api.github.com')
       .post('/app/installations/2/access_tokens')
       .reply(200, { token: 'test' })
+      .get('/app/installations?per_page=100')
+      .reply(200, [])
 
-    // Test that a comment is posted
-    // nock('https://api.github.com')
-    //   .post('/repos/hiimbex/testing-things/issues/1/comments', (body: any) => {
-    //     done(expect(body).toMatchObject(issueCreatedBody))
-    //     return true
-    //   })
-    //   .reply(200)
+    nock('https://api.github.com')
+      .get(
+        '/repos/my-org/testing-things/contents/.github/community_health_check.yml',
+      )
+      .reply(200, {})
+      .get(
+        '/repos/my-org/.github/contents/.github/community_health_check.yml',
+        (body: any) => {
+          done()
+          return true
+        },
+      )
+      .reply(200, {})
 
     // Receive a webhook event
-    // await probot.receive({ name: 'schedule', payload })
-    await done()
+    await probot.receive({ name: 'schedule', payload })
   })
 
   afterEach(() => {

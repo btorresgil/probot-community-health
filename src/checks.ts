@@ -2,35 +2,33 @@ import { Context } from 'probot'
 import pMapSeries from 'p-map-series'
 import * as R from 'ramda'
 
-import { AppConfig, defaults } from './config'
+import { fetchFile, result, fetchRepoTopics } from './helpers'
+import { AppConfig, CheckResult, AllCheckResults } from './types'
 
-interface CheckResult {
-  name: string
-  passed: boolean
-  score: number
-  value: number
-  infoLink: string
+export function checkDescription(
+  context: Context,
+  appConfig: AppConfig,
+): CheckResult {
+  const config = appConfig.checks.description
+  const passed = context.payload.repository.description.length > 0
+  return result(config, passed)
 }
 
-interface AllCheckResults {
-  checks: CheckResult[]
-  score: number
-  total: number
-}
-
-async function fetchRepoTopics(context: Context<any>): Promise<string[]> {
-  const topicsResponse = await context.github.repos.listTopics(context.repo())
-  return topicsResponse.data.names
+export async function checkSupportFile(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.supportFile
+  const supportFile = await fetchFile(context, 'SUPPORT.md')
+  const passed = supportFile && supportFile.size >= 50 ? true : false
+  return result(config, passed)
 }
 
 export async function checkTopics(
   context: Context,
-  appConfig?: AppConfig,
+  appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = {
-    ...defaults!.checks!.topics,
-    ...appConfig?.checks?.topics,
-  }
+  const config = appConfig.checks.topics
   // Fetch topics for repo
   const repo = context.payload.repository
   const topics = await fetchRepoTopics(context)
@@ -57,20 +55,14 @@ export async function checkTopics(
           (res, topic) => res || config.requiredTopic.includes(topic),
           false,
         )
-  return {
-    passed,
-    name: config.name,
-    value: config.value,
-    infoLink: config.infoLink,
-    score: passed ? config.value : 0,
-  }
+  return result(config, passed)
 }
 
 export const checks = [checkTopics]
 
 export async function performChecks(
   context: Context,
-  config: any,
+  config: AppConfig,
 ): Promise<AllCheckResults> {
   const checkResults = await pMapSeries(checks, check => check(context, config))
   return {
