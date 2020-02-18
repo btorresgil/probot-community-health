@@ -1,6 +1,8 @@
 # probot-community-health
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that Asseses the community health of organization repositories and guides maintainers to improve
+> A GitHub App built with [Probot](https://github.com/probot/probot) that
+> assesses the community health of organization repositories and guides
+> maintainers to improve
 
 ## Setup
 
@@ -17,7 +19,8 @@ npm start
 
 ## Contributing
 
-If you have suggestions for how probot-community-health could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+If you have suggestions for how probot-community-health could be improved, or
+want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 

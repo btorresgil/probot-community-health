@@ -1,8 +1,7 @@
 {
   "name": "probot-community-health",
   "version": "1.0.0",
-  "private": true,
-  "description": "Asseses the community health of organization repositories and guides maintainers to improve",
+  "description": "Assesses the community health of organization repositories and guides maintainers to improve",
   "author": "Brian Torres-Gil <brian@ixi.us>",
   "license": "ISC",
   "repository": "https://github.com/btorresgil/probot-community-health.git",
@@ -18,17 +17,26 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "probot run ./lib/index.js",
     "lint": "standard **/*.ts --fix",
-    "test": "jest && standard **/*.ts",
+    "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "probot": "^9.5.3"
+    "handlebars": "^4.7.3",
+    "p-map-series": "^2.1.0",
+    "probot": "^9.5.3",
+    "probot-config": "^1.1.0",
+    "probot-messages": "^1.0.1",
+    "probot-scheduler": "^2.0.0-beta.1",
+    "ramda": "^0.27.0"
   },
   "devDependencies": {
+    "@types/cache-manager": "^2.10.1",
     "@types/jest": "^24.0.19",
     "@types/nock": "^11.1.0",
     "@types/node": "^13.1.0",
+    "@types/ramda": "^0.26.41",
     "@typescript-eslint/parser": "^2.4.0",
+    "cache-manager": "^2.11.1",
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.9.0",
     "nock": "^11.4.0",

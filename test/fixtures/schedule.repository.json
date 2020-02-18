@@ -1,0 +1,27 @@
+{
+  "action": "repository",
+  "installation": {
+    "id": 2
+  },
+  "repository": {
+    "name": "testing-things",
+    "private": false,
+    "owner": {
+      "login": "my-org"
+    },
+    "description": "Test repo",
+    "fork": false,
+    "full_name": "my-org/testing-things",
+    "homepage": "https://example.com",
+    "language": "Python",
+    "archived": false,
+    "disabled": false,
+    "license": {
+      "key": "other",
+      "name": "Other",
+      "spdx_id": "NOASSERTION",
+      "url": null,
+      "node_id": "MDc6TGljZW5zZTA="
+    }
+  }
+}
