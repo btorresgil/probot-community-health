@@ -22,7 +22,6 @@ export = (app: Application) => {
     )) as AppConfig
     // Perform checks
     const results = await performChecks(context, config)
-    context.log.error(results)
     if (results.score < config.threshold) {
       // Open an issue to report results and request changes
       context.log.debug(

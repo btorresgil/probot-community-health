@@ -144,5 +144,6 @@ export async function performChecks(
     checks: checkResults,
     score: R.sum(checkResults.map(result => result.score)),
     total: R.sum(checkResults.map(result => result.value)),
+    threshold: config.threshold,
   }
 }

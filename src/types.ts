@@ -39,4 +39,5 @@ export interface AllCheckResults {
   checks: CheckResult[]
   score: number
   total: number
+  threshold: number
 }
