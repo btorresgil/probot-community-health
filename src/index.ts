@@ -1,66 +1,61 @@
-import { Application, Context } from 'probot'
+require('source-map-support').install()
+import { Application } from 'probot'
 import createScheduler from 'probot-scheduler'
-import sendMessage from 'probot-messages'
 
+import { defaultConfig } from './config'
 import { performChecks } from './checks'
-import { failedChecks } from './messages'
+import { checkStatus, issueMessage } from './messages'
 import { isActivePublicRepo } from './helpers'
 import { AppConfig } from './types'
-
-const defaultConfig: AppConfig = {
-  threshold: 80,
-  checks: {
-    description: {
-      disabled: false,
-      name: 'Repo has a description',
-      value: 15,
-      infoLink: 'https://github.com',
-    },
-    supportFile: {
-      disabled: false,
-      name: 'SUPPORT.md file exists',
-      value: 15,
-      infoLink: 'https://github.com',
-    },
-    topics: {
-      disabled: false,
-      name: 'Required topics attached to repo',
-      value: 10,
-      infoLink: 'https://github.com',
-      requiredTopic: [],
-      topicCorrections: {},
-    },
-  },
-}
+import { sendMessage } from './issue'
 
 export = (app: Application) => {
   // createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
-  createScheduler(app, { interval: 60 * 1000 }) // Trigger each repo once a week
+  createScheduler(app, { interval: 60 * 1000, delay: false }) // Trigger each repo every minute
   app.on('schedule.repository', async context => {
     // Don't check private or other non-relevant repos
     if (!isActivePublicRepo(context)) return
     // Read configuration
     const config = (await context.config(
-      'community_health_check.yml',
+      'community_health_assessment.yml',
       defaultConfig,
     )) as AppConfig
     // Perform checks
     const results = await performChecks(context, config)
-    if (results.total < config.threshold) {
+    context.log.error(results)
+    if (results.score < config.threshold) {
       // Open an issue to report results and request changes
+      context.log.debug(
+        `Failed checks on repo: ${context.payload.repository.full_name}`,
+      )
       sendMessage(
         app,
         context,
-        `[Community Health Check] - Changes needed`,
-        failedChecks(results),
+        `[Community Health Assessment] Changes needed`,
+        issueMessage,
+        {
+          update: checkStatus(results),
+          updateAfterDays: 0,
+        },
       )
+    } else {
+      const message = await sendMessage(
+        app,
+        context,
+        `[Community Health Assessment] Changes needed`,
+        issueMessage,
+        {
+          update:
+            checkStatus(results) +
+            `\n\nCongratulations! This repo has met the community health requirements!`,
+          updateAfterDays: 0,
+        },
+      )
+      context.github.issues.update({
+        ...context.repo(),
+        issue_number: message.issue,
+        state: 'closed',
+      })
     }
   })
-
-  // app.on('issues.opened', async context => {
-  //   const issueComment = context.issue({
-  //     body: 'Thanks for opening this issue!',
-  //   })
-  //   await context.github.issues.createComment(issueComment)
-  // })
 }

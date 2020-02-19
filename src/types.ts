@@ -7,13 +7,18 @@ export interface PrimaryCheckConfig {
 
 export interface ChecksConfig {
   description: PrimaryCheckConfig
+  readmeFile: PrimaryCheckConfig
   supportFile: PrimaryCheckConfig
+  repoName: PrimaryCheckConfig
+  contributingFile: PrimaryCheckConfig
   topics: PrimaryCheckConfig & {
     requiredTopic: string[]
     topicCorrections: {
       [topic: string]: string
     }
   }
+  customTemplates: PrimaryCheckConfig
+  codeOfConductFile: PrimaryCheckConfig
 }
 
 export interface AppConfig {
@@ -27,6 +32,7 @@ export interface CheckResult {
   score: number
   value: number
   infoLink: string
+  skipped?: boolean
 }
 
 export interface AllCheckResults {

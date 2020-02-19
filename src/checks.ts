@@ -2,7 +2,12 @@ import { Context } from 'probot'
 import pMapSeries from 'p-map-series'
 import * as R from 'ramda'
 
-import { fetchFile, result, fetchRepoTopics } from './helpers'
+import {
+  fetchFile,
+  result,
+  fetchRepoTopics,
+  issueTemplateExists,
+} from './helpers'
 import { AppConfig, CheckResult, AllCheckResults } from './types'
 
 export function checkDescription(
@@ -10,7 +15,19 @@ export function checkDescription(
   appConfig: AppConfig,
 ): CheckResult {
   const config = appConfig.checks.description
+  if (config.disabled) return result(config)
   const passed = context.payload.repository.description.length > 0
+  return result(config, passed)
+}
+
+export async function checkReadmeFile(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.readmeFile
+  if (config.disabled) return result(config)
+  const file = await fetchFile(context, 'README.md')
+  const passed = file && file.size >= 200 ? true : false
   return result(config, passed)
 }
 
@@ -19,8 +36,30 @@ export async function checkSupportFile(
   appConfig: AppConfig,
 ): Promise<CheckResult> {
   const config = appConfig.checks.supportFile
-  const supportFile = await fetchFile(context, 'SUPPORT.md')
-  const passed = supportFile && supportFile.size >= 50 ? true : false
+  if (config.disabled) return result(config)
+  const file = await fetchFile(context, 'SUPPORT.md')
+  const passed = file && file.size >= 50 ? true : false
+  return result(config, passed)
+}
+
+export function checkRepoName(
+  context: Context,
+  appConfig: AppConfig,
+): CheckResult {
+  const config = appConfig.checks.repoName
+  if (config.disabled) return result(config)
+  const passed = context.payload.repository.name.length > 10
+  return result(config, passed)
+}
+
+export async function checkContributingFile(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.contributingFile
+  if (config.disabled) return result(config)
+  const file = await fetchFile(context, 'CONTRIBUTING.md')
+  const passed = file && file.size >= 200 ? true : false
   return result(config, passed)
 }
 
@@ -29,6 +68,7 @@ export async function checkTopics(
   appConfig: AppConfig,
 ): Promise<CheckResult> {
   const config = appConfig.checks.topics
+  if (config.disabled) return result(config)
   // Fetch topics for repo
   const repo = context.payload.repository
   const topics = await fetchRepoTopics(context)
@@ -58,7 +98,42 @@ export async function checkTopics(
   return result(config, passed)
 }
 
-export const checks = [checkTopics]
+export async function checkCustomTemplates(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.customTemplates
+  if (config.disabled) return result(config)
+  const issueTemplatePassed = issueTemplateExists(context)
+  const pullRequestTemplate = fetchFile(
+    context,
+    '.github/PULL_REQUEST_TEMPLATE.md',
+  )
+  const pullRequestTemplatePassed = pullRequestTemplate !== null
+  return result(config, issueTemplatePassed && pullRequestTemplatePassed)
+}
+
+export async function checkCodeOfConductFile(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.codeOfConductFile
+  if (config.disabled) return result(config)
+  const file = await fetchFile(context, 'CODE_OF_CONDUCT.md')
+  const passed = file && file.size >= 200 ? true : false
+  return result(config, passed)
+}
+
+export const checks = [
+  checkDescription,
+  checkReadmeFile,
+  checkSupportFile,
+  checkRepoName,
+  checkContributingFile,
+  checkTopics,
+  checkCustomTemplates,
+  checkCodeOfConductFile,
+]
 
 export async function performChecks(
   context: Context,

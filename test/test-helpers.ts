@@ -1,6 +1,9 @@
 import { Application } from 'probot'
 import cacheManager from 'cache-manager'
-import ApplicationFunction from '../src'
+import * as R from 'ramda'
+
+import { defaultConfig } from '../src/config'
+import { AppConfig, ChecksConfig } from '../src/types'
 
 const cache = cacheManager.caching({ store: 'memory', ttl: 0 })
 
@@ -18,4 +21,13 @@ export function createApp(appFn?: any) {
   const app = newApp()
   appFn && appFn(app)
   return app
+}
+
+export function createConfig<K extends keyof ChecksConfig>(
+  section: K,
+  extra?: any,
+): AppConfig {
+  const config = R.clone(defaultConfig)
+  config.checks[section] = { ...config.checks[section], ...extra }
+  return config
 }

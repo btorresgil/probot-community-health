@@ -1,10 +1,7 @@
-// You can import your modules
-// import index from '../src/index'
-
 import nock from 'nock'
 // Requiring our app implementation
 import myProbotApp from '../src'
-import { Probot, Context } from 'probot'
+import { Probot } from 'probot'
 // Requiring our fixtures
 import payload from './fixtures/schedule.repository.json'
 const fs = require('fs')

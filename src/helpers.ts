@@ -15,12 +15,14 @@ export function result(
   config: PrimaryCheckConfig,
   passed?: boolean,
 ): CheckResult {
+  const skipped = passed === undefined
   return {
     passed: passed || false,
     name: config.name,
     value: config.value,
     infoLink: config.infoLink,
     score: passed ? config.value : 0,
+    skipped,
   }
 }
 
@@ -40,10 +42,16 @@ export async function fetchFile(
   size: number
   content: string
 } | null> {
-  const file = await context.github.repos.getContents({
-    ...context.repo(),
-    path: filePath,
-  })
+  let file
+  try {
+    file = await context.github.repos.getContents({
+      ...context.repo(),
+      path: filePath,
+    })
+  } catch (err) {
+    if (err.name === 'HttpError' && err.status === 404) return null
+    throw err
+  }
   if (
     !Array.isArray(file.data) &&
     file.data.type === 'file' &&
@@ -58,4 +66,29 @@ export async function fetchFile(
   } else {
     return null
   }
+}
+
+export async function fetchDirectory(
+  context: Context<any>,
+  dirPath: string,
+): Promise<string[] | null> {
+  const dir = await context.github.repos.getContents({
+    ...context.repo(),
+    path: dirPath,
+  })
+  if (Array.isArray(dir.data)) {
+    return dir.data.map(item => item.name)
+  } else {
+    return null
+  }
+}
+
+export async function issueTemplateExists(
+  context: Context<any>,
+): Promise<boolean> {
+  const issueFile = await fetchFile(context, '.github/ISSUE_TEMPLATE.md')
+  if (issueFile !== null) return true
+  const issueDir = await fetchDirectory(context, '.github/ISSUE_TEMPLATE')
+  if (issueDir !== null && issueDir.length > 0) return true
+  return false
 }
