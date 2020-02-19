@@ -25,7 +25,6 @@
     "handlebars": "^4.7.3",
     "p-map-series": "^2.1.0",
     "probot": "^9.5.3",
-    "probot-messages": "^1.0.1",
     "probot-scheduler": "^2.0.0-beta.1",
     "ramda": "^0.27.0",
     "source-map-support": "^0.5.16"
