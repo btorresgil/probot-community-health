@@ -10,8 +10,7 @@ import { AppConfig } from './types'
 import { sendMessage } from './issue'
 
 export = (app: Application) => {
-  // createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
-  createScheduler(app, { interval: 60 * 1000, delay: false }) // Trigger each repo every minute
+  createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
   app.on('schedule.repository', async context => {
     // Don't check private or other non-relevant repos
     if (!isActivePublicRepo(context)) return
