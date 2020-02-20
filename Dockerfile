@@ -9,6 +9,6 @@ FROM node:10-alpine
 WORKDIR /app
 COPY --from=build-env /app /app
 ENV PATH=$PATH:/app/node_modules/.bin
-EXPOSE 80
+EXPOSE 3000
 ENTRYPOINT ["npm", "run"]
 CMD ["start"]
