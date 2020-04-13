@@ -7,7 +7,13 @@ import payload from './fixtures/schedule.repository.json'
 const fs = require('fs')
 const path = require('path')
 
-describe('My Probot app', () => {
+jest.setTimeout(2000)
+nock.emitter.on('no match', (req: any) => {
+  // console.log('no match:', JSON.stringify(req, null, 2))
+  console.log('no match:', req.path)
+})
+
+describe('Community Health App', () => {
   let probot: any
   let mockCert: string
 
@@ -24,12 +30,12 @@ describe('My Probot app', () => {
 
   beforeEach(() => {
     nock.disableNetConnect()
-    probot = new Probot({ id: 123, cert: mockCert })
+    probot = new Probot({ id: 123, cert: mockCert, githubToken: 'test' })
     // Load our app into probot
     probot.load(myProbotApp)
   })
 
-  test('webhook checks for app config', async done => {
+  test('webhook checks for app config', async (done) => {
     // Test that we correctly return a test token
     nock('https://api.github.com')
       .post('/app/installations/2/access_tokens')
@@ -39,11 +45,11 @@ describe('My Probot app', () => {
 
     nock('https://api.github.com')
       .get(
-        '/repos/my-org/testing-things/contents/.github/community_health_check.yml',
+        '/repos/my-org/testing-things/contents/.github/community_health_assessment.yml',
       )
       .reply(200, {})
       .get(
-        '/repos/my-org/.github/contents/.github/community_health_check.yml',
+        '/repos/my-org/.github/contents/.github/community_health_assessment.yml',
         (body: any) => {
           done()
           return true
