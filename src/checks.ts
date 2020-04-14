@@ -27,7 +27,7 @@ export async function checkReadmeFile(
   const config = appConfig.checks.readmeFile
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'README.md')
-  const passed = file && file.size >= 200 ? true : false
+  const passed = file && file.size >= config.size ? true : false
   return result(config, passed)
 }
 
@@ -38,7 +38,7 @@ export async function checkSupportFile(
   const config = appConfig.checks.supportFile
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'SUPPORT.md')
-  const passed = file && file.size >= 50 ? true : false
+  const passed = file && file.size >= config.size ? true : false
   return result(config, passed)
 }
 
@@ -48,7 +48,7 @@ export function checkRepoName(
 ): CheckResult {
   const config = appConfig.checks.repoName
   if (config.disabled) return result(config)
-  const passed = context.payload.repository.name.length > 10
+  const passed = context.payload.repository.name.length > config.length
   return result(config, passed)
 }
 
@@ -59,7 +59,7 @@ export async function checkContributingFile(
   const config = appConfig.checks.contributingFile
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'CONTRIBUTING.md')
-  const passed = file && file.size >= 200 ? true : false
+  const passed = file && file.size >= config.size ? true : false
   return result(config, passed)
 }
 
@@ -120,7 +120,7 @@ export async function checkCodeOfConductFile(
   const config = appConfig.checks.codeOfConductFile
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'CODE_OF_CONDUCT.md')
-  const passed = file && file.size >= 200 ? true : false
+  const passed = file && file.size >= config.size ? true : false
   return result(config, passed)
 }
 

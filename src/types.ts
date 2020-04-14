@@ -7,10 +7,18 @@ export interface PrimaryCheckConfig {
 
 export interface ChecksConfig {
   description: PrimaryCheckConfig
-  readmeFile: PrimaryCheckConfig
-  supportFile: PrimaryCheckConfig
-  repoName: PrimaryCheckConfig
-  contributingFile: PrimaryCheckConfig
+  readmeFile: PrimaryCheckConfig & {
+    size: number
+  }
+  supportFile: PrimaryCheckConfig & {
+    size: number
+  }
+  repoName: PrimaryCheckConfig & {
+    length: number
+  }
+  contributingFile: PrimaryCheckConfig & {
+    size: number
+  }
   topics: PrimaryCheckConfig & {
     requiredTopic: string[]
     topicCorrections: {
@@ -18,7 +26,9 @@ export interface ChecksConfig {
     }
   }
   customTemplates: PrimaryCheckConfig
-  codeOfConductFile: PrimaryCheckConfig
+  codeOfConductFile: PrimaryCheckConfig & {
+    size: number
+  }
 }
 
 export interface AppConfig {
