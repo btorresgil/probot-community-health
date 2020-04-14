@@ -46,6 +46,7 @@ export interface SendMessageOptions {
   owner?: string
   repo?: string
   issue?: Octokit.IssuesListForRepoResponseItem | null
+  hash?: string
 }
 
 export async function authenticateMessenger(
@@ -59,16 +60,13 @@ export async function authenticateMessenger(
 }
 
 export function hashMessage(message: string): string {
-  return crypto
-    .createHash('sha256')
-    .update(message)
-    .digest('hex')
+  return crypto.createHash('sha256').update(message).digest('hex')
 }
 
-async function findMessage(
+export async function findMessage(
   app: Application | string,
   context: Context<any>,
-  messageHash: string,
+  hash: string,
   { owner, repo }: { owner?: string; repo?: string } = {},
 ): Promise<Octokit.IssuesListForRepoResponseItem | null> {
   let appSlug: string
@@ -80,7 +78,7 @@ async function findMessage(
   if (!owner || !repo) {
     ;({ owner, repo } = context.repo())
   }
-  const messageHashRx = new RegExp(`<!--${messageHash}-->`)
+  const messageHashRx = new RegExp(`<!--${hash}-->`)
   const { data: issues } = await context.github.issues.listForRepo({
     owner,
     repo,
@@ -101,12 +99,23 @@ async function findMessage(
 export async function findMessageIssue(
   app: Application,
   context: Context<any>,
-  message: string,
+  options: {
+    hash?: string
+    message?: string
+  } = {},
 ): Promise<Octokit.IssuesListForRepoResponseItem | null> {
+  if (options.hash == null && options.message == null)
+    throw new Error('hash or message option required in findMessageIssue')
   const { appName, appUrl } = await authenticateMessenger(app)
-  const messageHash = hashMessage(
-    message.replace(/{appName}/, appName).replace(/{appUrl}/, appUrl),
-  )
+  const messageHash =
+    options.hash ||
+    (options.message &&
+      hashMessage(
+        options.message
+          .replace(/{appName}/, appName)
+          .replace(/{appUrl}/, appUrl),
+      )) ||
+    ''
   return await findMessage(appName, context, messageHash)
 }
 
@@ -154,6 +163,7 @@ export async function sendMessage(
     owner,
     repo,
     issue,
+    hash,
   }: SendMessageOptions = {},
 ): Promise<Message> {
   if (!app || !context || !title || !message) {
@@ -167,7 +177,7 @@ export async function sendMessage(
   const { appName, appUrl, appSlug } = await authenticateMessenger(app)
 
   message = message.replace(/{appName}/, appName).replace(/{appUrl}/, appUrl)
-  const messageHash = hashMessage(message)
+  const messageHash = hash || hashMessage(message)
 
   if (!issue) {
     issue = await findMessage(appSlug, context, messageHash, {

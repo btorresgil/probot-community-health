@@ -1,4 +1,5 @@
-import { Context } from 'probot'
+import { Context, Octokit } from 'probot'
+import metadata from 'probot-metadata'
 
 import { PrimaryCheckConfig, CheckResult } from './types'
 
@@ -77,7 +78,7 @@ export async function fetchDirectory(
     path: dirPath,
   })
   if (Array.isArray(dir.data)) {
-    return dir.data.map(item => item.name)
+    return dir.data.map((item) => item.name)
   } else {
     return null
   }
@@ -91,4 +92,19 @@ export async function issueTemplateExists(
   const issueDir = await fetchDirectory(context, '.github/ISSUE_TEMPLATE')
   if (issueDir !== null && issueDir.length > 0) return true
   return false
+}
+
+export function fetchPreviousScore(
+  context: Context<any>,
+  issue?: any,
+): Promise<number | undefined> {
+  return metadata(context, issue).get('score')
+}
+
+export function setScore(
+  score: number,
+  context: Context<any>,
+  issue?: any,
+): Promise<Octokit.IssuesUpdateResponse> {
+  return metadata(context, issue).set('score', score)
 }
