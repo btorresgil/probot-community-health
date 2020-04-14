@@ -108,3 +108,22 @@ export function setScore(
 ): Promise<Octokit.IssuesUpdateResponse> {
   return metadata(context, issue).set('score', score)
 }
+
+/**
+ * Switch from key: value[] to value: key for each value in value array
+ *
+ * This makes it possible to easily convert bad topics to good when good
+ * is the key and bad is an array under that key.
+ *
+ */
+export function transposeTopicCorrections(topicCorrections: {
+  [goodTopic: string]: string[]
+}): { [badTopic: string]: string } {
+  return Object.entries(topicCorrections).reduce((acc, topicPair) => {
+    const result = topicPair[1].reduce(
+      (acc2, badTopic) => ({ ...acc2, [badTopic]: topicPair[0] }),
+      {},
+    )
+    return result
+  }, {})
+}

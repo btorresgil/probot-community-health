@@ -22,7 +22,7 @@ export interface ChecksConfig {
   topics: PrimaryCheckConfig & {
     requiredTopic: string[]
     topicCorrections: {
-      [topic: string]: string
+      [topic: string]: string[]
     }
   }
   customTemplates: PrimaryCheckConfig

@@ -7,6 +7,7 @@ import {
   result,
   fetchRepoTopics,
   issueTemplateExists,
+  transposeTopicCorrections,
 } from './helpers'
 import { AppConfig, CheckResult, AllCheckResults } from './types'
 
@@ -73,9 +74,8 @@ export async function checkTopics(
   const repo = context.payload.repository
   const topics = await fetchRepoTopics(context)
   // Validate topics
-  const correctedTopics = topics.map(
-    topic => config.topicCorrections[topic] || topic,
-  )
+  const topicsToCorrect = transposeTopicCorrections(config.topicCorrections)
+  const correctedTopics = topics.map((topic) => topicsToCorrect[topic] || topic)
   if (!R.equals(topics, correctedTopics)) {
     // Made change to topic format, so apply change
     context.log.debug(
