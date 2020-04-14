@@ -139,11 +139,13 @@ export async function performChecks(
   context: Context,
   config: AppConfig,
 ): Promise<AllCheckResults> {
-  const checkResults = await pMapSeries(checks, check => check(context, config))
+  const checkResults = await pMapSeries(checks, (check) =>
+    check(context, config),
+  )
   return {
     checks: checkResults,
-    score: R.sum(checkResults.map(result => result.score)),
-    total: R.sum(checkResults.map(result => result.value)),
+    score: R.sum(checkResults.map((result) => result.score)),
+    total: R.sum(checkResults.map((result) => result.value)),
     threshold: config.threshold,
   }
 }
