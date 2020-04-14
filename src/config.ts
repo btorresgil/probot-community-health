@@ -8,7 +8,7 @@ export const defaultConfig: AppConfig = {
       name: 'Repo has a description',
       value: 15,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#repository-description',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#repository-description',
     },
     readmeFile: {
       disabled: false,
@@ -16,7 +16,7 @@ export const defaultConfig: AppConfig = {
       value: 15,
       size: 200,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#readme-md-file',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#readmemd-file',
     },
     supportFile: {
       disabled: false,
@@ -24,7 +24,7 @@ export const defaultConfig: AppConfig = {
       value: 15,
       size: 50,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#support-file',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#support-file',
     },
     repoName: {
       disabled: false,
@@ -32,7 +32,7 @@ export const defaultConfig: AppConfig = {
       value: 10,
       length: 10,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#repository-name',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#repository-name',
     },
     contributingFile: {
       disabled: false,
@@ -40,14 +40,14 @@ export const defaultConfig: AppConfig = {
       value: 10,
       size: 200,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#contribution-guidelines',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#contribution-guidelines',
     },
     topics: {
       disabled: false,
       name: 'Required topics attached to repo',
       value: 10,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#repository-topics',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#repository-topics',
       requiredTopic: [],
       topicCorrections: {},
     },
@@ -56,7 +56,7 @@ export const defaultConfig: AppConfig = {
       name: 'Has custom issue and pull request templates',
       value: 5,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#issue-and-pr-templates',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#issue-and-pr-templates',
     },
     codeOfConductFile: {
       disabled: false,
@@ -64,7 +64,7 @@ export const defaultConfig: AppConfig = {
       value: 5,
       size: 200,
       infoLink:
-        'https://github.com/btorresgil/probot-community-health/docs/checks.md#code-of-conduct',
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#code-of-conduct',
     },
   },
 }
