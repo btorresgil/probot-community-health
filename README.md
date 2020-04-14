@@ -1,8 +1,12 @@
-# probot-community-health
+# GitHub App: Community Health Assessment Bot
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that
 > assesses the community health of organization repositories and guides
 > maintainers to improve
+
+## Documentation
+
+- [All health checks](/docs/checks.md)
 
 ## Setup
 
