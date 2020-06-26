@@ -1,5 +1,16 @@
 # Community Health Assessment Checks
 
+**Health Checks:**
+
+- [Repository description](#repository-description)
+- [README.md file](#readmemd-file)
+- [Support file](#support-file)
+- [Repository name](#repository-name)
+- [Contribution Guidelines](#contribution-guidelines)
+- [Repository Topics](#repository-topics)
+- [Issue and PR Templates](#issue-and-pr-templates)
+- [Code of Conduct](#code-of-conduct)
+
 ## Repository description
 
 Configuration key: `description`  
