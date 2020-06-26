@@ -2,7 +2,7 @@ import Handlebars from 'handlebars'
 
 export const issueMessage = `This issue was opened by a bot called [{appName}]({appUrl}) because this repo has failed too many community health checks.
 
-Repo maintainers please take the time to improve the items above to reach the target score. These improvements will help others find your work and contribute to it. This issue will update as your score improves until it hits the target.
+**Repo maintainers:** Please take the time to fix these issues to reach the target score. These improvements will help others find your work and contribute to it. This issue will update as your score improves until it hits the target score.
 
 **See the comments below** for information on which health checks need attention.
 `
