@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('source-map-support').install()
 import { Application } from 'probot'
 import createScheduler from 'probot-scheduler'
@@ -9,7 +10,7 @@ import { isActivePublicRepo, fetchPreviousScore, setScore } from './helpers'
 import { AppConfig } from './types'
 import { sendMessage, hashMessage, findMessage } from './issue'
 
-export = (app: Application) => {
+export = (app: Application): void => {
   // createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
   createScheduler(app, { interval: 12 * 60 * 60 * 1000 }) // Every 12 hours
   app.on('schedule.repository', async (context) => {
@@ -20,8 +21,10 @@ export = (app: Application) => {
       'community_health_assessment.yml',
       defaultConfig,
     )) as AppConfig
+
     // Perform checks
     const results = await performChecks(context, config)
+
     const issueTitle = '[Community Health Assessment] Changes needed'
     const hash = hashMessage(issueTitle)
 

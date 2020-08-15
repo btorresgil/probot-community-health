@@ -87,6 +87,7 @@ describe('Health checks', () => {
       expect(result.skipped).toBe(true)
       await done()
     })
+
     test('fails if README.md file is too short', async (done) => {
       const config = createConfig('readmeFile')
 
@@ -130,6 +131,7 @@ describe('Health checks', () => {
       expect(result.skipped).toBe(true)
       await done()
     })
+
     test('fails if missing required topic', async (done) => {
       const config = createConfig('topics', { requiredTopic: ['required1'] })
 
