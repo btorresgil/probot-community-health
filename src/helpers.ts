@@ -1,7 +1,8 @@
 import { Context, Octokit } from 'probot'
 import metadata from 'probot-metadata'
+import R from 'ramda'
 
-import { PrimaryCheckConfig, CheckResult } from './types'
+import { PrimaryCheckConfig, CheckResult, AllCheckResults } from './types'
 
 export function isActivePublicRepo(context: Context): boolean {
   const repo = context.payload.repository
@@ -10,6 +11,12 @@ export function isActivePublicRepo(context: Context): boolean {
   } else {
     return true
   }
+}
+
+export function sortResultsByValue(results: AllCheckResults): AllCheckResults {
+  const byValueDesc = (a: CheckResult, b: CheckResult) => b.value - a.value
+  const sortedChecks = R.sort(byValueDesc, results.checks)
+  return { ...results, ...{ checks: sortedChecks } }
 }
 
 export function result(
