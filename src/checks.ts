@@ -17,7 +17,8 @@ export function checkDescription(
 ): CheckResult {
   const config = appConfig.checks.description
   if (config.disabled) return result(config)
-  const passed = context.payload.repository.description.length > 0
+  const description = context.payload.repository.description
+  const passed = description !== null && description.length > 0
   return result(config, passed)
 }
 
