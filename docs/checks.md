@@ -5,6 +5,8 @@
 - [Repository description](#repository-description)
 - [README.md file](#readmemd-file)
 - [Support file](#support-file)
+- [License File](#license-file)
+- [License Type](#license-type)
 - [Repository name](#repository-name)
 - [Contribution Guidelines](#contribution-guidelines)
 - [Repository Topics](#repository-topics)
@@ -52,6 +54,33 @@ Default value: 15
 
 Create a file called `SUPPORT.md` in the root of your repository. Case matters,
 so `SUPPORT.MD` does not count. The file must be at least 50 bytes by default.
+
+## License File
+
+Configuration key: `licenseFile`  
+Default value: 20
+
+#### Solution
+
+Create a file called `LICENSE` in the root of your repository. Recommended but
+not required to use https://choosealicense.com/ to populate this file.
+
+## License Type
+
+Configuration key: `license`  
+Default value: 10
+
+#### Configuration
+
+| Parameter | Default                               | Description                                                      |
+| --------- | ------------------------------------- | ---------------------------------------------------------------- |
+| licenses  | All known license types (not 'other') | Array of strings of acceptable license keys (eg. ["mit", "isc"]) |
+
+#### Solution
+
+Create a file called `LICENSE` in the root of your repository. Use
+https://choosealicense.com/ to populate this file. The license file text must be
+exact and be recognized by GitHub to pass this check.
 
 ## Repository name
 

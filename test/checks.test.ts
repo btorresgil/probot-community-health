@@ -5,6 +5,8 @@ import { Probot, Context } from 'probot'
 import { createApp, createConfig } from './test-helpers'
 // Requiring our fixtures
 import payload from './fixtures/schedule.repository.json'
+import licenseOther from './fixtures/license-other.json'
+import licenseISC from './fixtures/license-isc.json'
 import {
   checkDescription,
   checkReadmeFile,
@@ -13,6 +15,8 @@ import {
   checkTopics,
   checkContributingFile,
   checkCustomTemplates,
+  checkLicenseFile,
+  checkLicense,
 } from '../src/checks'
 import { PrimaryCheckConfig } from '../src/types'
 const fs = require('fs')
@@ -118,6 +122,90 @@ describe('Health checks', () => {
         })
 
       const result = await checkReadmeFile(context, config)
+      expect(result.passed).toBe(true)
+      await done()
+    })
+  })
+
+  describe('checkLicenseFile', () => {
+    test('skips if disabled', async (done) => {
+      const config = createConfig('licenseFile', { disabled: true })
+      const result = await checkLicenseFile(context, config)
+      expect(result.passed).toBe(false)
+      expect(result.skipped).toBe(true)
+      await done()
+    })
+
+    test('fails if missing license file', async (done) => {
+      const config = createConfig('licenseFile')
+      context.payload.repository.license = null
+      const result = await checkLicenseFile(context, config)
+      expect(result.passed).toBe(false)
+      await done()
+    })
+
+    test('passes if has unrecognized license file', async (done) => {
+      const config = createConfig('licenseFile')
+      context.payload.repository.license = licenseOther
+      const result = await checkLicenseFile(context, config)
+      expect(result.passed).toBe(true)
+      await done()
+    })
+
+    test('passes if has recognized license file', async (done) => {
+      const config = createConfig('licenseFile')
+      context.payload.repository.license = licenseISC
+      const result = await checkLicenseFile(context, config)
+      expect(result.passed).toBe(true)
+      await done()
+    })
+  })
+
+  describe('checkLicense', () => {
+    test('skips if disabled', async (done) => {
+      const config = createConfig('license', { disabled: true })
+      const result = await checkLicense(context, config)
+      expect(result.passed).toBe(false)
+      expect(result.skipped).toBe(true)
+      await done()
+    })
+
+    test('fails if missing license file', async (done) => {
+      const config = createConfig('license')
+      context.payload.repository.license = null
+      const result = await checkLicense(context, config)
+      expect(result.passed).toBe(false)
+      await done()
+    })
+
+    test('fails if has unrecognized license file with default config', async (done) => {
+      const config = createConfig('license')
+      context.payload.repository.license = licenseOther
+      const result = await checkLicense(context, config)
+      expect(result.passed).toBe(false)
+      await done()
+    })
+
+    test('passes if has recognized license file with default config', async (done) => {
+      const config = createConfig('license')
+      context.payload.repository.license = licenseISC
+      const result = await checkLicense(context, config)
+      expect(result.passed).toBe(true)
+      await done()
+    })
+
+    test('fails if has recognized license file with custom config', async (done) => {
+      const config = createConfig('license', { licenses: ['mit'] })
+      context.payload.repository.license = licenseISC
+      const result = await checkLicense(context, config)
+      expect(result.passed).toBe(false)
+      await done()
+    })
+
+    test('passes if has recognized license file with custom config', async (done) => {
+      const config = createConfig('license', { licenses: ['mit', 'isc'] })
+      context.payload.repository.license = licenseISC
+      const result = await checkLicense(context, config)
       expect(result.passed).toBe(true)
       await done()
     })
