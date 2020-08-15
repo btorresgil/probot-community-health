@@ -6,7 +6,12 @@ import createScheduler from 'probot-scheduler'
 import { defaultConfig } from './config'
 import { performChecks } from './checks'
 import { checkStatus, issueMessage } from './messages'
-import { isActivePublicRepo, fetchPreviousScore, setScore } from './helpers'
+import {
+  isActivePublicRepo,
+  fetchPreviousScore,
+  setScore,
+  sortResultsByValue,
+} from './helpers'
 import { AppConfig } from './types'
 import { sendMessage, hashMessage, findMessage } from './issue'
 
@@ -23,7 +28,8 @@ export = (app: Application): void => {
     )) as AppConfig
 
     // Perform checks
-    const results = await performChecks(context, config)
+    const resultsUnsorted = await performChecks(context, config)
+    const results = sortResultsByValue(resultsUnsorted)
 
     const issueTitle = '[Community Health Assessment] Changes needed'
     const hash = hashMessage(issueTitle)
