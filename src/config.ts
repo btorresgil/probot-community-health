@@ -1,7 +1,7 @@
 import { AppConfig } from './types'
 
 export const defaultConfig: AppConfig = {
-  threshold: 80,
+  threshold: 110,
   checks: {
     description: {
       disabled: false,
@@ -17,6 +17,21 @@ export const defaultConfig: AppConfig = {
       size: 200,
       infoLink:
         'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#readmemd-file',
+    },
+    licenseFile: {
+      disabled: false,
+      name: 'Has a LICENSE file',
+      value: 20,
+      infoLink:
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#license-file',
+    },
+    license: {
+      disabled: false,
+      name: 'Has a recognized open source license',
+      value: 10,
+      licenses: null,
+      infoLink:
+        'https://github.com/btorresgil/probot-community-health/blob/master/docs/checks.md#license-type',
     },
     supportFile: {
       disabled: false,

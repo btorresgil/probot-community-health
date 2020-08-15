@@ -32,6 +32,34 @@ export async function checkReadmeFile(
   return result(config, passed)
 }
 
+export async function checkLicenseFile(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.licenseFile
+  if (config.disabled) return result(config)
+  const license = context.payload.repository.license
+  // license == null: No LICENSE file
+  const passed = license !== null
+  return result(config, passed)
+}
+
+export async function checkLicense(
+  context: Context,
+  appConfig: AppConfig,
+): Promise<CheckResult> {
+  const config = appConfig.checks.license
+  if (config.disabled) return result(config)
+  const license = context.payload.repository.license
+  // license == null: No LICENSE file
+  if (license === null) return result(config, false)
+  const approvedLicenses = config.licenses
+  // license.key === "other": LICENSE file is not standard
+  if (approvedLicenses === null) return result(config, license.key !== 'other')
+  const passed = approvedLicenses.includes(license.key)
+  return result(config, passed)
+}
+
 export async function checkSupportFile(
   context: Context,
   appConfig: AppConfig,
@@ -127,6 +155,8 @@ export async function checkCodeOfConductFile(
 export const checks = [
   checkDescription,
   checkReadmeFile,
+  checkLicenseFile,
+  checkLicense,
   checkSupportFile,
   checkRepoName,
   checkContributingFile,

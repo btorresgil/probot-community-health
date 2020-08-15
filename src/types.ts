@@ -10,6 +10,10 @@ export interface ChecksConfig {
   readmeFile: PrimaryCheckConfig & {
     size: number
   }
+  licenseFile: PrimaryCheckConfig
+  license: PrimaryCheckConfig & {
+    licenses: string[] | null
+  }
   supportFile: PrimaryCheckConfig & {
     size: number
   }
