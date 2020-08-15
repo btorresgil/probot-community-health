@@ -80,14 +80,14 @@ describe('Health checks', () => {
   })
 
   describe('checkReadmeFile', () => {
-    test('skips if disabled', async done => {
+    test('skips if disabled', async (done) => {
       const config = createConfig('readmeFile', { disabled: true })
       const result = await checkReadmeFile(context, config)
       expect(result.passed).toBe(false)
       expect(result.skipped).toBe(true)
       await done()
     })
-    test('fails if README.md file is too short', async done => {
+    test('fails if README.md file is too short', async (done) => {
       const config = createConfig('readmeFile')
 
       nock('https://api.github.com')
@@ -104,7 +104,7 @@ describe('Health checks', () => {
       await done()
     })
 
-    test('passes if contains meaningful README.md file', async done => {
+    test('passes if contains meaningful README.md file', async (done) => {
       const config = createConfig('readmeFile')
 
       nock('https://api.github.com')
@@ -123,14 +123,14 @@ describe('Health checks', () => {
   })
 
   describe('checkTopics', () => {
-    test('skips if disabled', async done => {
+    test('skips if disabled', async (done) => {
       const config = createConfig('topics', { disabled: true })
       const result = await checkTopics(context, config)
       expect(result.passed).toBe(false)
       expect(result.skipped).toBe(true)
       await done()
     })
-    test('fails if missing required topic', async done => {
+    test('fails if missing required topic', async (done) => {
       const config = createConfig('topics', { requiredTopic: ['required1'] })
 
       nock('https://api.github.com')
@@ -142,7 +142,7 @@ describe('Health checks', () => {
       await done()
     })
 
-    test('passes if contains required topic', async done => {
+    test('passes if contains required topic', async (done) => {
       const config = createConfig('topics', { requiredTopic: ['required1'] })
 
       nock('https://api.github.com')

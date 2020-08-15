@@ -16,7 +16,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon --exec \"npm start\"",
     "start": "probot run ./lib/index.js",
-    "lint": "standard **/*.ts --fix",
+    "lint": "prettier --write .",
     "test": "LOG_LEVEL=error jest",
     "test:watch": "LOG_LEVEL=error jest --watch --notify --notifyMode=change --coverage"
   },
@@ -52,15 +52,6 @@
   },
   "engines": {
     "node": ">= 8.3.0"
-  },
-  "standard": {
-    "parser": "@typescript-eslint/parser",
-    "env": [
-      "jest"
-    ],
-    "plugins": [
-      "typescript"
-    ]
   },
   "jest": {
     "testEnvironment": "node"
