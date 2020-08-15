@@ -68,7 +68,14 @@ describe('Health checks', () => {
       expect(result.skipped).toBe(true)
     })
 
-    test('fails if description missing', () => {
+    test('fails if description is missing', () => {
+      const config = createConfig('description')
+      context.payload.repository.description = null
+      const result = checkDescription(context, config)
+      expect(result.passed).toBe(false)
+    })
+
+    test('fails if description is blank', () => {
       const config = createConfig('description')
       context.payload.repository.description = ''
       const result = checkDescription(context, config)
