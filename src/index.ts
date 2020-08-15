@@ -16,7 +16,16 @@ import { AppConfig } from './types'
 import { sendMessage, hashMessage, findMessage } from './issue'
 
 export = (app: Application): void => {
-  // createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
+  console.error('A console error log')
+  console.warn('A console warning log')
+  console.info('A console info log')
+  console.debug('A console debug log')
+  app.log.fatal('A fatal log')
+  app.log.error('A error log')
+  app.log.warn('A warning log')
+  app.log.info('A info log')
+  app.log.debug('A debug log')
+  app.log.trace('A trace log')
   createScheduler(app, { interval: 12 * 60 * 60 * 1000 }) // Every 12 hours
   app.on('schedule.repository', async (context) => {
     // Don't check private or other non-relevant repos
