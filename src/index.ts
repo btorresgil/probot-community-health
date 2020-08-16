@@ -15,9 +15,11 @@ import {
 import { AppConfig } from './types'
 import { sendMessage, hashMessage, findMessage } from './issue'
 
+// Default interval is every 12 hours (12 * 60 * 60 * 1000 = 43200000)
+const INTERVAL = parseInt(process.env.INTERVAL || '43200000')
+
 export = (app: Application): void => {
-  // createScheduler(app, { interval: 7 * 24 * 60 * 60 * 1000 }) // Trigger each repo once a week
-  createScheduler(app, { interval: 12 * 60 * 60 * 1000 }) // Every 12 hours
+  createScheduler(app, { interval: INTERVAL })
   app.on('schedule.repository', async (context) => {
     // Don't check private or other non-relevant repos
     if (!isActivePublicRepo(context)) return
