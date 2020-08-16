@@ -1,6 +1,6 @@
 {
   "name": "probot-community-health",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Assesses the community health of organization repositories and guides maintainers to improve",
   "author": "Brian Torres-Gil <brian@ixi.us>",
   "license": "ISC",
