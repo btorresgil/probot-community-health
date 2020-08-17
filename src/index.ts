@@ -43,7 +43,7 @@ export = (app: Application): void => {
 
       if (results.score === previousScore) {
         context.log.info(
-          `Failed checks on repo, but same score as last time, do nothing: ${context.payload.repository.full_name}`,
+          `Changes needed on repo (${context.payload.repository.full_name}), but same score (${results.score}) as last time, do nothing`,
         )
         return
       }
@@ -51,9 +51,15 @@ export = (app: Application): void => {
 
     if (results.score < config.threshold) {
       // Open an issue to report results and request changes
-      context.log.info(
-        `Failed checks on repo: ${context.payload.repository.full_name}`,
-      )
+      if (issue) {
+        context.log.info(
+          `Changes needed on repo, updating issue: ${context.payload.repository.full_name}`,
+        )
+      } else {
+        context.log.info(
+          `Changes needed on repo, creating issue: ${context.payload.repository.full_name}`,
+        )
+      }
       const message = await sendMessage(
         app,
         context,
@@ -74,7 +80,7 @@ export = (app: Application): void => {
     } else {
       if (issue) {
         context.log.info(
-          `Repo changed from failed to success: ${context.payload.repository.full_name}`,
+          `Repo changed from problems to success, closing issue: ${context.payload.repository.full_name}`,
         )
         const message = await sendMessage(
           app,
@@ -84,7 +90,7 @@ export = (app: Application): void => {
           {
             update:
               checkStatus(results) +
-              `\n\nCongratulations! This repo has met the community health requirements!`,
+              `\n\n:tada: Congratulations! This repo has met the community health requirements! :tada:`,
             updateAfterDays: 0,
             issue,
             hash,
