@@ -67,7 +67,7 @@ export = (app: Application): void => {
         issueMessage,
         {
           update: checkStatus(results),
-          updateAfterDays: 7,
+          updateAfterDays: 0,
           issue,
           hash,
         },
