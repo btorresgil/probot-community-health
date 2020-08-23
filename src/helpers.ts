@@ -4,6 +4,11 @@ import R from 'ramda'
 
 import { PrimaryCheckConfig, CheckResult, AllCheckResults } from './types'
 
+export async function refreshRepo(context: Context) {
+  const response = await context.github.repos.get(context.repo())
+  return response.data
+}
+
 export function isActivePublicRepo(context: Context): boolean {
   const repo = context.payload.repository
   if (repo.private || repo.fork || repo.archived || repo.disabled) {

@@ -11,6 +11,7 @@ import {
   fetchPreviousScore,
   setScore,
   sortResultsByValue,
+  refreshRepo,
 } from './helpers'
 import { AppConfig } from './types'
 import { sendMessage, hashMessage, findMessage } from './issue'
@@ -21,6 +22,8 @@ const INTERVAL = parseInt(process.env.INTERVAL || '43200000')
 export = (app: Application): void => {
   createScheduler(app, { interval: INTERVAL })
   app.on('schedule.repository', async (context) => {
+    // Get the latest information on this repo
+    context.payload.repository = await refreshRepo(context)
     // Don't check private or other non-relevant repos
     if (!isActivePublicRepo(context)) return
     // Read configuration
