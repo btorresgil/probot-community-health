@@ -11,8 +11,10 @@ export const checkStatus = Handlebars.compile(
   `
 | Health Check | Pass | Score | More Info |
 | ------------ | ---- | ----- | --------- |
-{{#each checks}}
+{{#each checks~}}
+{{#unless this.skipped~}}
 | {{this.name}} | {{#if this.passed}}:white_check_mark:{{else}}:x:{{/if}} | {{this.score}} / {{this.value}} | [More info]({{this.infoLink}})
+{{/unless}}
 {{/each}}
 
 Current Score: {{score}}
