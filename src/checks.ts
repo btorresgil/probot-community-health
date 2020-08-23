@@ -133,8 +133,8 @@ export async function checkCustomTemplates(
 ): Promise<CheckResult> {
   const config = appConfig.checks.customTemplates
   if (config.disabled) return result(config)
-  const issueTemplatePassed = issueTemplateExists(context)
-  const pullRequestTemplate = fetchFile(
+  const issueTemplatePassed = await issueTemplateExists(context)
+  const pullRequestTemplate = await fetchFile(
     context,
     '.github/PULL_REQUEST_TEMPLATE.md',
   )
