@@ -4,9 +4,19 @@ import R from 'ramda'
 
 import { PrimaryCheckConfig, CheckResult, AllCheckResults } from './types'
 
-export async function refreshRepo(context: Context) {
-  const response = await context.github.repos.get(context.repo())
-  return response.data
+export async function refreshRepo(
+  context: Context,
+): Promise<Octokit.ReposGetResponse> {
+  try {
+    const response = await context.github.repos.get(context.repo())
+    return response.data
+  } catch (err) {
+    context.log.error(
+      `Can't refresh repo details: ${JSON.stringify(context.repo())}`,
+    )
+    context.log.error(`Error details: ${JSON.stringify(err)}`)
+    throw err
+  }
 }
 
 export function isActivePublicRepo(context: Context): boolean {
@@ -42,8 +52,14 @@ export function result(
 export async function fetchRepoTopics(
   context: Context<any>,
 ): Promise<string[]> {
-  const topicsResponse = await context.github.repos.listTopics(context.repo())
-  return topicsResponse.data.names
+  try {
+    const topicsResponse = await context.github.repos.listTopics(context.repo())
+    return topicsResponse.data.names
+  } catch (err) {
+    context.log.error(`Can't fetch topics: ${JSON.stringify(context.repo())}`)
+    context.log.error(`Error details: ${JSON.stringify(err)}`)
+    throw err
+  }
 }
 
 export async function fetchFile(
@@ -85,10 +101,16 @@ export async function fetchDirectory(
   context: Context<any>,
   dirPath: string,
 ): Promise<string[] | null> {
-  const dir = await context.github.repos.getContents({
-    ...context.repo(),
-    path: dirPath,
-  })
+  let dir: Octokit.Response<Octokit.ReposGetContentsResponse>
+  try {
+    dir = await context.github.repos.getContents({
+      ...context.repo(),
+      path: dirPath,
+    })
+  } catch (err) {
+    if (err.name === 'HttpError' && err.status === 404) return null
+    throw err
+  }
   if (Array.isArray(dir.data)) {
     return dir.data.map((item) => item.name)
   } else {
