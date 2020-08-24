@@ -43,6 +43,11 @@ describe('Community Health App', () => {
       .get('/app/installations?per_page=100')
       .reply(200, [])
 
+    // Refresh repo details first
+    nock('https://api.github.com')
+      .get('/repos/my-org/testing-things')
+      .reply(200, payload.repository)
+
     nock('https://api.github.com')
       .get(
         '/repos/my-org/testing-things/contents/.github/community_health_assessment.yml',
