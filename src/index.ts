@@ -82,6 +82,13 @@ async function main(app: Application, context: Context) {
     }`,
   )
 
+  if (!issue) {
+    // Right before we open the issue, double check that an issue still doesn't
+    // exist yet. If it does, we have a race condition and should just quit out now.
+    const doubleCheck = await findMessage(context, appInfo.appSlug)
+    if (doubleCheck) return
+  }
+
   const message = await createUpdateIssueBody(
     context,
     appInfo,
