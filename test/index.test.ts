@@ -3,7 +3,8 @@ import nock from 'nock'
 import myProbotApp from '../src'
 import { Probot } from 'probot'
 // Requiring our fixtures
-import payload from './fixtures/schedule.repository.json'
+import payload from './fixtures/repository.edited.json'
+import appPayload from './fixtures/app.json'
 const fs = require('fs')
 const path = require('path')
 
@@ -30,7 +31,7 @@ describe('Community Health App', () => {
 
   beforeEach(() => {
     nock.disableNetConnect()
-    probot = new Probot({ id: 123, cert: mockCert, githubToken: 'test' })
+    probot = new Probot({ id: 3, cert: mockCert, githubToken: 'test' })
     // Load our app into probot
     probot.load(myProbotApp)
   })
@@ -43,14 +44,16 @@ describe('Community Health App', () => {
       .get('/app/installations?per_page=100')
       .reply(200, [])
 
+    nock('https://api.github.com').get('/app').reply(200, appPayload)
+
     // Refresh repo details first
     nock('https://api.github.com')
-      .get('/repos/my-org/testing-things')
+      .get('/repos/my-org/my-repo')
       .reply(200, payload.repository)
 
     nock('https://api.github.com')
       .get(
-        '/repos/my-org/testing-things/contents/.github/community_health_assessment.yml',
+        '/repos/my-org/my-repo/contents/.github/community_health_assessment.yml',
       )
       .reply(200, {})
       .get(
@@ -63,7 +66,7 @@ describe('Community Health App', () => {
       .reply(200, {})
 
     // Receive a webhook event
-    await probot.receive({ name: 'schedule', payload })
+    await probot.receive({ name: 'repository', payload })
   })
 
   afterEach(() => {

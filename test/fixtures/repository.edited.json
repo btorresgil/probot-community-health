@@ -1,17 +1,22 @@
 {
-  "action": "repository",
+  "action": "edited",
+  "changes": {
+    "description": {
+      "from": null
+    }
+  },
   "installation": {
     "id": 2
   },
   "repository": {
-    "name": "testing-things",
+    "name": "my-repo",
     "private": false,
     "owner": {
       "login": "my-org"
     },
     "description": "Test repo",
     "fork": false,
-    "full_name": "my-org/testing-things",
+    "full_name": "my-org/my-repo",
     "homepage": "https://example.com",
     "language": "Python",
     "archived": false,

@@ -1,8 +1,38 @@
-import { Context, Octokit } from 'probot'
+import { Application, Context, Octokit } from 'probot'
 import metadata from 'probot-metadata'
 import R from 'ramda'
 
-import { PrimaryCheckConfig, CheckResult, AllCheckResults } from './types'
+import {
+  PrimaryCheckConfig,
+  CheckResult,
+  AllCheckResults,
+  State,
+  AnyCheckConfig,
+  AppConfig,
+  CheckId,
+  DescriptionConfig,
+  ReadmeFileConfig,
+  LicenseFileConfig,
+  SupportFileConfig,
+  LicenseConfig,
+  RepoNameConfig,
+  ContributingFileConfig,
+  TopicsConfig,
+  CustomTemplatesConfig,
+  CodeOfConductFileConfig,
+  CheckStateIndex,
+} from './types'
+import { checkStatus, issueMessage } from './messages'
+
+export async function fetchAppInfo(
+  app: Application,
+): Promise<{ appName: string; appUrl: string; appSlug: string }> {
+  const appGh = await app.auth()
+  const { name: appName, html_url: appUrl, slug: appSlug } = (
+    await appGh.apps.getAuthenticated()
+  ).data
+  return { appName, appUrl, appSlug }
+}
 
 export async function refreshRepo(
   context: Context,
@@ -34,12 +64,46 @@ export function sortResultsByValue(results: AllCheckResults): AllCheckResults {
   return { ...results, ...{ checks: sortedChecks } }
 }
 
+export function getConfig(
+  id: 'description',
+  config: AppConfig,
+): DescriptionConfig
+export function getConfig(id: 'readmeFile', config: AppConfig): ReadmeFileConfig
+export function getConfig(
+  id: 'licenseFile',
+  config: AppConfig,
+): LicenseFileConfig
+export function getConfig(id: 'license', config: AppConfig): LicenseConfig
+export function getConfig(
+  id: 'supportFile',
+  config: AppConfig,
+): SupportFileConfig
+export function getConfig(id: 'repoName', config: AppConfig): RepoNameConfig
+export function getConfig(
+  id: 'contributingFile',
+  config: AppConfig,
+): ContributingFileConfig
+export function getConfig(id: 'topics', config: AppConfig): TopicsConfig
+export function getConfig(
+  id: 'customTemplates',
+  config: AppConfig,
+): CustomTemplatesConfig
+export function getConfig(
+  id: 'codeOfConductFile',
+  config: AppConfig,
+): CodeOfConductFileConfig
+export function getConfig(id: CheckId, config: AppConfig): AnyCheckConfig {
+  const checkConfig = config.checks[id]
+  return { ...checkConfig, id }
+}
+
 export function result(
   config: PrimaryCheckConfig,
   passed?: boolean,
 ): CheckResult {
   const skipped = passed === undefined
   return {
+    id: config.id || 'description',
     passed: passed || false,
     name: config.name,
     value: config.value,
@@ -128,19 +192,29 @@ export async function issueTemplateExists(
   return false
 }
 
-export function fetchPreviousScore(
-  context: Context<any>,
-  issue?: any,
-): Promise<number | undefined> {
-  return metadata(context, issue).get('score')
+export function generateState(results: AllCheckResults): State {
+  const pickCheckFields = R.pick(['id', 'passed', 'score', 'skipped'])
+  const { score, threshold, checks } = results
+  return { score, threshold, checks: checks.map(pickCheckFields) }
 }
 
-export function setScore(
-  score: number,
+export function fetchPreviousState(
+  context: Context<any>,
+  issue?: any,
+): Promise<State | undefined> {
+  return metadata(context, issue).get('state')
+}
+
+export function setState(
+  state: State | AllCheckResults,
   context: Context<any>,
   issue?: any,
 ): Promise<Octokit.IssuesUpdateResponse> {
-  return metadata(context, issue).set('score', score)
+  if ('total' in state) {
+    const newState = generateState(state)
+    return metadata(context, issue).set('state', newState)
+  }
+  return metadata(context, issue).set('state', state)
 }
 
 /**
@@ -160,4 +234,26 @@ export function transposeTopicCorrections(topicCorrections: {
     )
     return result
   }, {})
+}
+
+export function changesMessage(
+  results: AllCheckResults,
+  previousState: State,
+): string {
+  // Organize into object by id
+  const previousChecks = previousState.checks.reduce<CheckStateIndex>(
+    (obj, check) => ({ ...obj, [check.id]: check }),
+    {} as CheckStateIndex,
+  )
+  // Compare results with previous state
+  const changes = results.checks.filter(
+    (check) => check.passed !== previousChecks[check.id].passed,
+  )
+  const changesListText = changes.map(
+    (check) =>
+      `* ${check.name} → ${check.passed ? ':white_check_mark:' : ':x:'}`,
+  )
+  return `Changes:\n${changesListText.join(`\n`)}\n\nScore: ${
+    previousState.score
+  } → ${results.score}`
 }

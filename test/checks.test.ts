@@ -4,7 +4,8 @@ import myProbotApp from '../src'
 import { Probot, Context } from 'probot'
 import { createApp, createConfig } from './test-helpers'
 // Requiring our fixtures
-import payload from './fixtures/schedule.repository.json'
+import payload from './fixtures/repository.edited.json'
+
 import licenseOther from './fixtures/license-other.json'
 import licenseISC from './fixtures/license-isc.json'
 import {
@@ -103,7 +104,7 @@ describe('Health checks', () => {
       const config = createConfig('readmeFile')
 
       nock('https://api.github.com')
-        .get('/repos/my-org/testing-things/contents/README.md')
+        .get('/repos/my-org/my-repo/contents/README.md')
         .reply(200, {
           type: 'file',
           size: 1,
@@ -120,7 +121,7 @@ describe('Health checks', () => {
       const config = createConfig('readmeFile')
 
       nock('https://api.github.com')
-        .get('/repos/my-org/testing-things/contents/README.md')
+        .get('/repos/my-org/my-repo/contents/README.md')
         .reply(200, {
           type: 'file',
           size: 200,
@@ -231,7 +232,7 @@ describe('Health checks', () => {
       const config = createConfig('topics', { requiredTopic: ['required1'] })
 
       nock('https://api.github.com')
-        .get('/repos/my-org/testing-things/topics')
+        .get('/repos/my-org/my-repo/topics')
         .reply(200, { names: ['topic1', 'topic2', 'topic3'] })
 
       const result = await checkTopics(context, config)
@@ -243,7 +244,7 @@ describe('Health checks', () => {
       const config = createConfig('topics', { requiredTopic: ['required1'] })
 
       nock('https://api.github.com')
-        .get('/repos/my-org/testing-things/topics')
+        .get('/repos/my-org/my-repo/topics')
         .reply(200, { names: ['required1', 'topic2', 'topic3'] })
 
       const result = await checkTopics(context, config)
