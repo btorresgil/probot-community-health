@@ -17,8 +17,9 @@ export const checkStatus = Handlebars.compile(
 {{/unless}}
 {{/each}}
 
-Current Score: {{score}}
-Target Score: {{threshold}}
+Current score: {{score}}
+Target threshold: {{threshold}}
+Total possible: {{total}}
 `,
   { strict: true },
 )

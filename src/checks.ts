@@ -176,7 +176,9 @@ export async function performChecks(
   return {
     checks: checkResults,
     score: R.sum(checkResults.map((result) => result.score)),
-    total: R.sum(checkResults.map((result) => result.value)),
+    total: R.sum(
+      checkResults.map((result) => (result.skipped ? 0 : result.value)),
+    ),
     threshold: config.threshold,
   }
 }
