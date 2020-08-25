@@ -43,16 +43,27 @@ async function main(app: Application, context: Context) {
 
   const issue = await findMessage(context, appInfo.appSlug)
 
+  let previousState: State | undefined
+
   if (results.score >= config.threshold) {
     if (!issue) return
     context.log.info(
       `Repo changed from problems to success, closing issue: ${context.payload.repository.full_name}`,
     )
+    previousState = await fetchPreviousState(context, issue)
+    // Create comment with what changed
+    if (issue && previousState) {
+      await createComment(
+        context,
+        appInfo,
+        changesMessage(results, previousState),
+        { issue },
+      )
+    }
     closeIssue(context, appInfo, issue, results)
     return
   }
 
-  let previousState: State | undefined
   if (issue) {
     previousState = await fetchPreviousState(context, issue)
 
