@@ -8,6 +8,7 @@ import {
   fetchRepoTopics,
   issueTemplateExists,
   transposeTopicCorrections,
+  getConfig,
 } from './helpers'
 import { AppConfig, CheckResult, AllCheckResults } from './types'
 
@@ -15,7 +16,7 @@ export function checkDescription(
   context: Context,
   appConfig: AppConfig,
 ): CheckResult {
-  const config = appConfig.checks.description
+  const config = getConfig('description', appConfig)
   if (config.disabled) return result(config)
   const description = context.payload.repository.description
   const passed = description !== null && description.length > 0
@@ -26,7 +27,7 @@ export async function checkReadmeFile(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.readmeFile
+  const config = getConfig('readmeFile', appConfig)
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'README.md')
   const passed = file && file.size >= config.size ? true : false
@@ -37,7 +38,7 @@ export async function checkLicenseFile(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.licenseFile
+  const config = getConfig('licenseFile', appConfig)
   if (config.disabled) return result(config)
   const license = context.payload.repository.license
   // license == null: No LICENSE file
@@ -49,7 +50,7 @@ export async function checkLicense(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.license
+  const config = getConfig('license', appConfig)
   if (config.disabled) return result(config)
   const license = context.payload.repository.license
   // license == null: No LICENSE file
@@ -65,7 +66,7 @@ export async function checkSupportFile(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.supportFile
+  const config = getConfig('supportFile', appConfig)
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'SUPPORT.md')
   const passed = file && file.size >= config.size ? true : false
@@ -76,7 +77,7 @@ export function checkRepoName(
   context: Context,
   appConfig: AppConfig,
 ): CheckResult {
-  const config = appConfig.checks.repoName
+  const config = getConfig('repoName', appConfig)
   if (config.disabled) return result(config)
   const passed = context.payload.repository.name.length > config.length
   return result(config, passed)
@@ -86,7 +87,7 @@ export async function checkContributingFile(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.contributingFile
+  const config = getConfig('contributingFile', appConfig)
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'CONTRIBUTING.md')
   const passed = file && file.size >= config.size ? true : false
@@ -97,7 +98,7 @@ export async function checkTopics(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.topics
+  const config = getConfig('topics', appConfig)
   if (config.disabled) return result(config)
   // Fetch topics for repo
   const repo = context.payload.repository
@@ -131,7 +132,7 @@ export async function checkCustomTemplates(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.customTemplates
+  const config = getConfig('customTemplates', appConfig)
   if (config.disabled) return result(config)
   const issueTemplatePassed = await issueTemplateExists(context)
   const pullRequestTemplate = await fetchFile(
@@ -146,7 +147,7 @@ export async function checkCodeOfConductFile(
   context: Context,
   appConfig: AppConfig,
 ): Promise<CheckResult> {
-  const config = appConfig.checks.codeOfConductFile
+  const config = getConfig('codeOfConductFile', appConfig)
   if (config.disabled) return result(config)
   const file = await fetchFile(context, 'CODE_OF_CONDUCT.md')
   const passed = file && file.size >= config.size ? true : false

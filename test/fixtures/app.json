@@ -1,0 +1,20 @@
+{
+  "id": 123,
+  "slug": "octoapp",
+  "owner": {
+    "login": "github",
+    "id": 1
+  },
+  "name": "Octocat App",
+  "description": "",
+  "external_url": "https://example.com",
+  "html_url": "https://github.com/apps/octoapp",
+  "permissions": {
+    "metadata": "read",
+    "contents": "read",
+    "issues": "write",
+    "single_file": "write"
+  },
+  "events": ["push", "pull_request"],
+  "installations_count": 3
+}
