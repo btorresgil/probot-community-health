@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^16.43.1",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "p-map-series": "^2.1.0",
     "probot": "^9.11.3",
     "probot-metadata": "^1.0.1",
