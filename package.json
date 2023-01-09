@@ -26,7 +26,7 @@
     "@octokit/rest": "^16.43.1",
     "handlebars": "^4.7.6",
     "p-map-series": "^2.1.0",
-    "probot": "^9.11.3",
+    "probot": "^12.2.8",
     "probot-metadata": "^1.0.1",
     "ramda": "^0.27.0",
     "source-map-support": "^0.5.16"
